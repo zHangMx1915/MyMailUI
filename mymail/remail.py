@@ -25,30 +25,31 @@ def get_msg(user_account, password, debuglevel=1, limits=1):
     global user, mail_letter
     n = 0
     str = r'^[0-9a-zA-Z_]{0,19}@[0-9a-zA-Z]{1,13}\.[com,cn,net]{1,3}$'
-    if re.match(str, user_account):
-        while n < limits:
-            pop3_server = 'pop.' + user_account.split('@')[-1]      # 解析邮箱账号得到邮件服务器地址
-            server = poplib.POP3(pop3_server)                       # 连接到服务器
-            # server.set_debuglevel(debuglevel)                       # 可选：1为打开，验证连接到邮件服务器
-            # print(server.getwelcome().decode('utf8'))             # 打印POP3服务器的欢迎文字，验证连接邮件服务器
-            server.user(user_account)                               # 身份验证
-            server.pass_(password)
-            resp, mails, octets = server.list()                     # 使用list()返回所有邮件的编号
-            index = len(mails)
-            if index < 1:
-                return None
-            resp, lines, octets = server.retr(index-n)
-            msg_content = b'\r\n'.join(lines).decode('utf-8')  # 可以获得整个邮件的原始文本:
-            # print(msg_content)
-            msg = Parser().parsestr(msg_content)  # 解析出邮件:
-            server.close()
-            print('****************** 第%d封邮件 *****************' % (n + 1))
-            sun = print_info(msg)
-            n += 1
+    try:
+        if re.match(str, user_account):
+            while n < limits:
+                pop3_server = 'pop.' + user_account.split('@')[-1]      # 解析邮箱账号得到邮件服务器地址
+                server = poplib.POP3(pop3_server)                       # 连接到服务器
+                # server.set_debuglevel(debuglevel)                       # 可选：1为打开，验证连接到邮件服务器
+                # print(server.getwelcome().decode('utf8'))             # 打印POP3服务器的欢迎文字，验证连接邮件服务器
+                server.user(user_account)                               # 身份验证
+                server.pass_(password)
+                resp, mails, octets = server.list()                     # 使用list()返回所有邮件的编号
+                index = len(mails)
+                if index < 1:
+                    return None
+                resp, lines, octets = server.retr(index-n)
+                msg_content = b'\r\n'.join(lines).decode('utf-8')  # 可以获得整个邮件的原始文本:
+                # print(msg_content)
+                msg = Parser().parsestr(msg_content)  # 解析出邮件:
+                server.close()
+                print('****************** 第%d封邮件 *****************' % (n + 1))
+                sun = print_info(msg)
+                n += 1
 
-            # print(sun)
-            return user, mail_letter
-    else:
+                # print(sun)
+                return user, mail_letter
+    except:
         print('------错误！请检查邮箱账号！------')
 
 

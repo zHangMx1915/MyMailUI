@@ -83,6 +83,14 @@ class LoginUi(Public):
         sums = 1
         self.window.destroy()
 
+    # 弹框提示
+    def eject_tips(self):
+        # 弹出提示框
+        str_var = tk.StringVar()
+        str_var.set('askokcancel')
+        messagebox.showwarning('提示信息', '错误！请检查用户名及密码！')
+        str_var.set('askokcancel') 
+
     # 校验登录
     def usr_login(self):
         global mail_content
@@ -100,18 +108,15 @@ class LoginUi(Public):
             #     email_data = json.load(fp)
             # user = email_data['user']
             # password = email_data['pass']
-
-            mail_content, user = get_msg(user_name, password)
-
-            print(user, mail_content)
-
-            self.loginusr_quit(self.window)
+            try:
+                mail_content, user = get_msg(user_name, password)
+                print(user, mail_content)
+                self.loginusr_quit(self.window)
+            except:
+                self.eject_tips()
         else:
             # 弹出提示框
-            str_var = tk.StringVar()
-            str_var.set('askokcancel')
-            messagebox.showwarning('提示信息', '错误！请检查用户名及密码！')
-            str_var.set('askokcancel')
+            self.eject_tips()
 
 
 class MyMainPage(Public):
